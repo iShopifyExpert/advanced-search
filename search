@@ -1,0 +1,66 @@
+<div class="rte info">
+	<form id="search-form" name="search" action="/search">
+		<label>Search{% if search.terms != blank %} again{% endif %}:</label>			
+		<input type="text" name="q" value="" />
+		
+		<div class="search-options">
+			<p><span class="search-option option-product" data="product"></span> Products</p>
+			<p><span class="search-option option-page" data="page"></span> Pages</p>
+			<p><span class="search-option option-article" data="article"></span> Posts</p>
+		</div> <!-- end .search-options -->
+		<input type="hidden" name="type" class="type-field" value="{{ type }}" />
+		
+		<button type="submit" id="search-submit">Search</button>
+	</form>
+</div> <!-- end .rte .info -->
+
+<styles>
+	.rte {font:12px/27px {{ o }}; color:#3d3d3d;}
+	.info label {display:block; text-transform:uppercase;}
+	.info input {display:block; width:100%; height:36px; border:1px solid {{ border-gray }}; font:10px/32px {{ m }}; color:{{ gray }}; letter-spacing:.2em; text-transform:uppercase; padding:0 10px; margin:0 0 10px;}
+	.info button {display:inline-block; width:auto; height:36px; background:none; border:1px solid {{ border-gray }}; font:700 12px/20px {{ m }}; color:{{ peach }}; letter-spacing:.2em; text-transform:uppercase; text-align:center; padding:0 15px; margin:0; cursor:pointer; transition:color .3s, border-color .3s, background .3s;}
+	.info button:hover {background:{{ blue }}; border-color:{{ blue }}; color:{{ off-white }};}
+	.search-options {font:12px/12px {{ m }}; color:{{ gray }}; margin:0 0 10px;}
+	.search-options p {margin:0 0 3px;}
+	.search-options span {display:inline-block; width:12px; height:12px; border:1px solid {{ border-gray }}; border-radius:2px; margin:0 2px 0 0;}
+	.search-options .selected {background:{{ border-gray }};}
+</styles>
+
+<script>
+$('.search-option').click(function() {
+	$(this).toggleClass('selected');
+	searchTypes();
+});
+
+function searchTypes() {
+	var string = '';
+	$('.search-option').each(function() {
+		var status = $(this).hasClass('selected');
+		if(status==true) {
+			var type = $(this).attr('data');
+			string += (type + ',');
+		}
+	});
+	var types = string.slice(0,-1);
+	if(types=='product,page,article') {var types = '';}
+	$('.type-field').val(types);
+}
+
+$(window).load(function() {
+	var query = window.location.search.substring(1);
+	console.log(query);
+	if (query.indexOf("&") == -1) {
+		$('.option-product').addClass('selected');
+		$('.option-page').addClass('selected');
+		$('.option-article').addClass('selected');
+	} else {
+		var vars = query.split("&");
+	    var pair = vars[1].split("=");
+		var types = pair[1];
+	    if (types.indexOf("product") >= 0) {$('.option-product').addClass('selected');}
+	    if (types.indexOf("page") >= 0) {$('.option-page').addClass('selected');}
+	    if (types.indexOf("article") >= 0) {$('.option-article').addClass('selected');}
+	}
+	searchTypes();
+});
+</script>
